@@ -23,3 +23,4 @@
 [15 A Guide to Time Series Visualization with Python 3](https://www.digitalocean.com/community/tutorials/a-guide-to-time-series-visualization-with-python-3)  
 [Feature Selection Time Series Forecasting](https://machinelearningmastery.com/feature-selection-time-series-forecasting-python/)
 [Python Tutor](http://pythontutor.com/)
+[Black Style](https://black.readthedocs.io/en/latest/the_black_code_style.html)

@@ -5,3 +5,5 @@
 [US Small Business Administration San Diego](https://www.sba.gov/offices/district/ca/san-diego)
 
 [SCORE](https://www.score.org/)
+
+[Business Ideas](https://www.reddit.com/r/Entrepreneur/comments/9f7ao5/if_you_are_looking_to_start_a_business_go_into/)
