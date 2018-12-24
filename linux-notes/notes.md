@@ -317,38 +317,212 @@ opsis of the command’s syntax, a description of the command’s purpose, and a
 `man 5 passwd`
 
 #### apropos—Display Appropriate Commands
-pg. 75
+search list of man pages for possible matches on a serach term
+`apropos floppy`
 
 #### whatis—Display a Very Brief Description of a Command
+Displays the name and one-line description of a man page matching a spciefied keyword
+`whatis ls`
+
 #### info—Display a Program’s Info Entry
+info pages are an alternative to man pages. info pages are hyperlinked
+`info coreutils`
+
 #### README and Other Program Documentation Files
+many other packages have documentation files in /usr/share/doc directory.
+you can use gless to read gzip files.
+
 ### Creating Your Own Commands with alias
+Aliasing allows you to create custom commands.
+you can have multiple commands by separating with semicolon
+`command1; command2; command3;`
+`cd /usr; ls; cd -`
+`alias foo='cd /usr; ls; cd -'`
+the structure is `alias name='string'`
+`foo`
+`type foo`
+`unalias foo`
+`type foo`
+avoided a program that already exists, but may be desired if you want common options
+`type ls`
+`alias` - see all the aliases
+`alias l.='ls -d .* --color=tty' alias ll='ls -l --color=tty' alias ls='ls --color=tty'
+`
+aliases defined in command line disappear. need environments to keep them.
 ### Revisiting Old Friends
+Visit documentation to other commands.
+
 ## 6: Redirection
+The I/O stands for input/output, and with this
+facility you can redirect the input and output of commands to and from files, as well as connect multiple commands to make powerful command pipelines.
+`cat` - concatenate files
+`sort` - sort lines of text
+`uniq` - report or omit repeated lines
+`wc` - print newline, word, and byte counts for each file.
+`grep` - print lines matching a pattern
+`head` - output the first part of a file
+`tail` - output the last part of a file
+`tee` - read from standard input and write to standard output and files
+
 ### Standard Input, Output, and Error
+programs send their results to a special file called standard output (stdout) and their status messages to another file called standard error (stderr).
+Programs take input from standard input (stdin) often the keyboard.
+I/O redirection allows us to change where output goes and where input comes from.
+
 #### Redirecting Standard Output
+use the `>` redirection operator followed by the name of the file.
+`ls -l /usr/bin > ls-output.txt`
+`ls -l ls-output.txt`
+`less ls-output.txt`
+
+try with a directory that doesn't exist
+`ls -l /bin/usr > ls-output.txt` receive an error
+`ls -l ls-output.txt` the file was overwritten
+`> ls-output.txt` willt runcate a file or reate a new empty file
+
+use `>>` to apend to a file
+`ls -l /usr/bin >> ls-output.txt`
+
 #### Redirecting Standard Error
+To redirect standard error we must refer to its file descriptor.
+first three of these file streams as standard input, output, and error, the shell references them internally as file descriptors 0, 1, and 2, respectively.
+
+`ls -l /bin/usr 2> ls-error.txt`
+
 #### Redirecting Standard Output and Standard Error to One File
+`ls -l /bin/usr > ls-output.txt 2>&1`
+First we redirect standard output to the file ls-output.txt, and then we redirect file descriptor 2 (standard error) to file descriptor 1 (standard output) using the nota- tion 2>&1.
+new bash
+Notice that the order of the redirections is significant. The redirection of standard error must always occur after redirecting standard output or it doesn’t work. 
+
+`ls -l /bin/usr &> ls-output.txt`
+
 #### Disposing of Unwanted Output
+The system provides a way to do this by redirecting output to a special file called /dev/null. This file is a system device called a bit bucket, which accepts input and does nothing with it.
+`ls -l /bin/usr 2> /dev/null`
+
 #### Redirecting Standard Input
+cat—Concatenate Files
+The cat command reads one or more files and copies them to standard out- put like so:
+`cat ls-output.txt`
+
+can rejoin files
+`cat movie.mpeg.0* > movie.mpeg`
+
+cat waits for input try:
+`cat`
+`The quick brown fox jumped over the lazy dog.`
+use ctrl+D to EOF
+
+n the absence of filename arguments, cat copies standard input to standard output, so we see our line of text repeated. 
+`cat > lazy_dog.txt`
+`The quick brown fox jumped over the lazy dog.`
+
+`cat < lazy_dog.txt`
+`The quick brown fox jumped over the lazy dog.`
 ### Pipelines
+The ability of commands to read data from standard input and send to standard output is utilized by a shell feature called pipelines. Using the pipe operator | (vertical bar), the standard output of one command can be piped into the standard input of another.
+`command1 | command2`
+
+to see output in a neat way:
+`ls -l /usr/bin | less`
+
 #### Filters
-#### uniq—Report or Omit Repeated Lines
+pipelines are often used to perform complex operations. you can put several commands together into a pipeline and produce a filtter. filters take input, change it, and output it.
+
+`ls /bin /usr/bin | sort | less`
+#### uniq—Report or Omit Repeated 
+the uniq command is often used in conjunction with sort. uniq accepts a sorted list of data from either standard input or a single filename argument (see the uniq man page for details) and, by default, removes any duplicates from the list.
+remove uniques:
+`ls /bin /usr/bin | sort | uniq | less`
+see duplcates:
+`ls /bin /usr/bin | sort | uniq -d | less`
+
 #### wc—Print Line, Word, and Byte Counts
+
+The wc (word count) command is used to display the number of lines, words, and bytes contained in files. For example:
+`wc ls-output.txt`
+`ls /bin /usr/bin | sort | uniq | wc -l`
+
 #### grep—Print Lines Matching a Pattern
+grep is a powerful program used to find text patterns within files, like this:
+`grep patterns [file...]`
+
 #### head/tail—Print First/Last Part of Files
+The head command prints the first 10 lines of a file, and the tail command prints the last 10 lines. The head command prints the first 10 lines of a file, and the tail command prints the last 10 lines.
+
+`head -n 5 ls-output.txt`
+`tail -n 5 ls-output.txt`
+
+Can be used with pipes as well.
+`ls /usr/bin | tail -n 5`
+
+tail has an option that allows you to view files in real time.
+`tail -f /var/log/messages`
+
 #### tee—Read from Stdin and Output to Stdout and Files
+The tee program reads standard input and copies it to both standard output (allowing the data to continue down the pipeline) and to one or more files.
+
+`ls /usr/bin | tee ls.txt | grep zip`
+
 ### Final Note
+Many commands make use of standard input and output, and almost all command-line programs use standard error to display their informative messages.
+
 ## 7: Seeing the World as the Shell Sees It
 ### Expansion
+With expansion, you enter something, and it is expanded into something else before the shell acts upon it.
+
+When the ENTER key is pressed, the shell automatically expands any qualifying characters on the command line before the command is carried out, so the echo command never saw the \*, only its expanded result
+
 #### Pathname Expansion
+The mechanism by which wildcards work is called pathname expansion
+`echo D*`
+
+for hidden files `ls -d .[!.]?*`
+
 #### Tilde Expansion
+When used at the beginning of a word, it expands into the name of the home directory of the named user or, if no user is named, the home directory of the current user:
+
+`echo ~`
+
 #### Arithmetic Expansion
+Arithmetic expansion uses the following form:
+`$((expression))`
+
+`echo $(($((5**2)) * 3))`
+
+`echo $(((5**2) * 3))`
+
 #### Brace Expansion
+With it, you can create multiple text strings from a pattern containing braces.
+`echo Front-{A,B,C}-Back`
+Patterns to be brace expanded may contain a leading portion called a preamble and a trailing portion called a postscript.
+`echo Number_{1..5}`
+`echo {Z..A}`
+`echo a{A{1,2},B{3,4}}b`
+`mkdir {2009..2011}-0{1..9} {2009..2011}-{10..12}`
+
 #### Parameter Expansion
+It’s a feature that is more useful in shell scripts than directly on the command line. Many of its capabilities have to do with the system’s ability to store small chunks of data and to give each chunk a name.
+
+`echo $USER`
+
 #### Command Substitution
+Command substitution allows us to use the output of a command as an expansion:
+`echo $(ls)`
+
+`ls -l $(which cp)`
+
+`file $(ls /usr/bin/* | grep zip)`
+
 ### Quoting
+The shell provides a mechanism called quoting to selectively suppress unwanted expansions.
+
+`echo this is a  test`
+`echo The total is $100.00`
+
 #### Double Quotes
+
 #### Single Quotes
 #### Escaping Characters
 ### Final Note
